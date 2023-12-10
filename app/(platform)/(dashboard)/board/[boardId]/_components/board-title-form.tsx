@@ -17,13 +17,18 @@ export const BoardTitleForm = ({ data }: BoardTitleFormProps) => {
   const { execute } = useAction(updateBoard, {
     onSuccess: (data) => {
       toast.success(`Board "${data.title}" updated`);
+      setTitle(data.title);
       disableEditing();
+    },
+    onError: (error) => {
+      toast.error(error);
     },
   });
 
   const formRef = useRef<ElementRef<"form">>(null);
   const inputRef = useRef<ElementRef<"input">>(null);
 
+  const [title, setTitle] = useState(data.title);
   const [isEditing, setIsEditing] = useState(false);
 
   const enableEditing = () => {
@@ -53,12 +58,16 @@ export const BoardTitleForm = ({ data }: BoardTitleFormProps) => {
 
   if (isEditing) {
     return (
-      <form ref={formRef} className="flex items-center gap-x-2">
+      <form
+        ref={formRef}
+        action={onSubmit}
+        className="flex items-center gap-x-2"
+      >
         <FormInput
           ref={inputRef}
           id="title"
-          onBlur={() => {}}
-          defaultValue={data.title}
+          onBlur={onBlur}
+          defaultValue={title}
           className="text-lg font-bold px-[7px] py-1 h-7 bg-transparent focus-visible:outline-none focus-visible:ring-transparent border-none"
         />
       </form>
@@ -70,7 +79,7 @@ export const BoardTitleForm = ({ data }: BoardTitleFormProps) => {
       variant="transparent"
       className="font-bold text-lg h-auto w-auto p-1 x-2"
     >
-      {data.title}
+      {title}
     </Button>
   );
 };
